@@ -19,7 +19,6 @@ root.geometry("1570x1000")
 RVwidth = 1570
 RVheight = 1000
 header = 50
-#root.resizable(0,0)
 
 my_tree = ttk.Treeview(root)
 
@@ -234,39 +233,78 @@ def print_roster(event):
             k+=1
             prev_class = row[2]
 
+def update_dept(event):
+    drop_student.current(0)
+    drop_instruct.current(0)
+    IDbox.delete(0, END)
+    print_roster(0)
+def clear_dept(event):
+    drop_dept.current(0)
+    print_roster(0)
 # define dept combo box
 drop_dept = ttk.Combobox(root,values = "", state="readonly", width=25)
 dept_label = Label(root, text="Dept.")
 dept_label.place(x=300, y=10)
 drop_dept.place(x=350, y=10)
-drop_dept.bind("<<ComboboxSelected>>", print_roster)
+drop_dept.bind("<<ComboboxSelected>>", update_dept)
+drop_dept.bind("<Button-3>", clear_dept)
+drop_dept.bind("<Delete>", clear_dept)
 
+def update_student(event):
+    drop_instruct.current(0)
+    IDbox.delete(0, END)
+    print_roster(0)
+def clear_student(event):
+    drop_student.current(0)
+    print_roster(0)
 # define student combo box
 drop_student = ttk.Combobox(root,values = "", state="readonly", width=25)
 student_label = Label(root, text="Student")
 student_label.place(x=550, y=10)
 drop_student.place(x=600, y=10)
-drop_student.bind("<<ComboboxSelected>>", print_roster)
+drop_student.bind("<<ComboboxSelected>>", update_student)
+drop_student.bind("<Button-3>", clear_student)
+drop_student.bind("<Delete>", clear_student)
 
+def update_instruct(event):
+    drop_student.current(0)
+    IDbox.delete(0, END)
+    print_roster(0)
+def clear_instruct(event):
+    drop_instruct.current(0)
+    print_roster(0)
 # define instructor combo box
 drop_instruct = ttk.Combobox(root,values = "", state="readonly", width=25)
 instruct_label = Label(root, text="Instructor")
 instruct_label.place(x=790, y=10)
 drop_instruct.place(x=850, y=10)
-drop_instruct.bind("<<ComboboxSelected>>", print_roster)
+drop_instruct.bind("<<ComboboxSelected>>", update_instruct)
+drop_instruct.bind("<Button-3>", clear_instruct)
+drop_instruct.bind("<Delete>", clear_instruct)
 
+def updateID(event):
+    drop_student.current(0)
+    drop_instruct.current(0)
+    drop_dept.current(0)
+    print_roster(0)
+def clear_IDbox(event):
+    IDbox.delete(0, END)
+    print_roster(0)
 # define student ID combo box
-IDbox =ttk.Entry(root)
+IDbox = ttk.Entry(root)
 ID_label = Label(root, text="Student ID")
 ID_label.place(x=1080, y = 10)
 IDbox.place(x=1150, y=10)
+IDbox.bind("<Button-3>", clear_IDbox)
+IDbox.bind("<Delete>", clear_IDbox)
 
 # define a search button
-IDbutton = ttk.Button(root, text="Search", command= lambda:print_roster(0))
+IDbutton = ttk.Button(root, text="Search", command= lambda:updateID(0))
 IDbutton.place(x=1290, y=8)
 
 #bind GUI resizing
 root.bind('<Configure>', resizer)
+
 root.bind('<Button-3>', print_roster)
 root.bind('<Return>', print_roster)
 
