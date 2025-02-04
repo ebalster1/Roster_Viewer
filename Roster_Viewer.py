@@ -6,6 +6,9 @@ import re
 import xlsxwriter
 # to retrieve file extension information
 import os
+# to convert ascii to float
+import locale 
+
 # tkinter GUI
 from tkinter import *
 root = Tk()
@@ -19,6 +22,11 @@ root.geometry("1570x1000")
 RVwidth = 1570
 RVheight = 1000
 header = 50
+
+# add some style
+style = ttk.Style()
+style.theme_use('clam')
+style.map('Treeview')
 
 my_tree = ttk.Treeview(root)
 
@@ -60,6 +68,7 @@ my_tree.tag_configure('evenrow', background="lightblue")
 my_tree.tag_configure('positive', foreground="black")
 my_tree.tag_configure('negative', foreground="red2")
 
+# define headings
 my_tree.heading("#0", text="Roster", anchor=W)
 my_tree.heading("Term", text="Term", anchor=W)
 my_tree.heading("Dept", text="Dept", anchor=W)
@@ -86,9 +95,10 @@ my_tree.heading("Registration Status", text="Registration Status", anchor=W)
 
 # add a scrollbar for viewing
 vsb = ttk.Scrollbar(root, orient="vertical", command=my_tree.yview)
-vsb.place(x=RVwidth-13, y=header, height=RVheight-header-30)  
+vsb.place(x=RVwidth-20, y=header, height=RVheight-header-30)  
 my_tree.configure(yscrollcommand=vsb.set)
 
+# list of students 
 complete_roster = []
 
 def resizer(event):
@@ -131,6 +141,7 @@ def resizer(event):
 
 def print_roster(event):
     k = 0
+    child = 0
     first_row_in_class = 0
     even_odd = 0
     prev_class = ''
@@ -195,7 +206,7 @@ def print_roster(event):
             print_roster = True
         elif(drop_student.get() == row[13]):
             print_roster = True
-        elif(IDbox.get() == row[12]):
+        elif(row[12] in IDbox.get() and IDbox.get() != ''):
             print_roster = True
 
         if(print_roster == True):
@@ -219,6 +230,7 @@ def print_roster(event):
                     my_tree.insert(parent='', index='end', iid=k, text="", values=header, tags=('oddrow',color))
                 first_row_in_class = k
                 k += 1
+                child = 0
             
             student_record = ['']*22
             student_record[12:] = row[12:]
@@ -227,8 +239,9 @@ def print_roster(event):
             else:
                 my_tree.insert(parent='', index='end', iid=k, text="", values=student_record, tags=('oddrow',color))
 
-            my_tree.move(k, first_row_in_class, 0)
+            my_tree.move(k, first_row_in_class, child)
             even_odd += 1
+            child += 1
 
             k+=1
             prev_class = row[2]
@@ -241,6 +254,7 @@ def update_dept(event):
 def clear_dept(event):
     drop_dept.current(0)
     print_roster(0)
+
 # define dept combo box
 drop_dept = ttk.Combobox(root,values = "", state="readonly", width=25)
 dept_label = Label(root, text="Dept.")
@@ -257,6 +271,7 @@ def update_student(event):
 def clear_student(event):
     drop_student.current(0)
     print_roster(0)
+
 # define student combo box
 drop_student = ttk.Combobox(root,values = "", state="readonly", width=25)
 student_label = Label(root, text="Student")
@@ -273,6 +288,7 @@ def update_instruct(event):
 def clear_instruct(event):
     drop_instruct.current(0)
     print_roster(0)
+
 # define instructor combo box
 drop_instruct = ttk.Combobox(root,values = "", state="readonly", width=25)
 instruct_label = Label(root, text="Instructor")
@@ -290,6 +306,7 @@ def updateID(event):
 def clear_IDbox(event):
     IDbox.delete(0, END)
     print_roster(0)
+
 # define student ID combo box
 IDbox = ttk.Entry(root)
 ID_label = Label(root, text="Student ID")
@@ -301,6 +318,21 @@ IDbox.bind("<Delete>", clear_IDbox)
 # define a search button
 IDbutton = ttk.Button(root, text="Search", command= lambda:updateID(0))
 IDbutton.place(x=1290, y=8)
+
+# double-click on items to copy them to clipboard
+def select(event):
+    coltext = my_tree.identify_column(event.x)
+    col = re.findall(r'\d+', coltext)
+    column = int(col[0])-1
+    selected = my_tree.selection()
+    email = str('')
+    for row in selected:
+        values = my_tree.item(row, 'values')
+        email = email + str(values[column]) + '\n'
+    root.clipboard_clear()
+    root.clipboard_append(email)
+    root.update()
+my_tree.bind('<Double-1>', select)
 
 #bind GUI resizing
 root.bind('<Configure>', resizer)
@@ -415,9 +447,5 @@ save_button = ttk.Button(
 )
 # put it in the upper left corner
 save_button.place(x=100, y=5)
-
-import locale 
-
-my_tree.place(x = 10, y = header, width = RVwidth-30, height = RVheight-header-10)
 
 root.mainloop()
