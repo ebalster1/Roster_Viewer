@@ -300,8 +300,8 @@ def print_roster(event):
             else:
                 color = 'positive'
 
-            if((thesis.get() and (locale.atof(num[0]) == 499 or
-                                   locale.atof(num[0]) == 595 or
+            if((thesis.get() and (locale.atof(num[0]) == 595 or
+                                   locale.atof(num[0]) == 596 or
                                    locale.atof(num[0]) == 599 or 
                                    locale.atof(num[0]) == 695 or 
                                    locale.atof(num[0]) == 699)) or 
