@@ -150,6 +150,9 @@ def resizer(event):
         CRbox.place(x=RVwidth-185, y=10)
         check.place(x=RVwidth-115, y=10)
 
+        enroll_label.place(x=RVwidth-430, y=10)
+        enroll_box.place(x=RVwidth-335, y=10)
+
         ID_label.place(x=RVwidth-250, y = 43)
         IDbox.place(x=RVwidth-185, width=100, y=43)
         IDbutton.place(x=RVwidth-75, y=38, width=60, height=30)
@@ -274,6 +277,8 @@ def print_roster(event):
             modified_roster2.append(modified_roster[r])
             r += 1
     CRs = 0
+    enrollment = 0
+    num_classes = 0
     for row in modified_roster2:
         print_r = False
         if(drop_dept.get() == '' and drop_student.get() == '' and 
@@ -310,6 +315,9 @@ def print_roster(event):
                 if(row[2] == prev_class):
                     even_odd -= 1
                 else:
+                    num_classes += 1
+                    enrollment += locale.atof(row[11])
+                    # if this is the first row in a class, print the header
                     header = row[:12]
                     if even_odd % 2 == 0:
                         my_tree.insert(parent='', index='end', iid=k, text="", values=header, tags=('evenrow',color))
@@ -333,12 +341,29 @@ def print_roster(event):
                 k+=1
                 prev_class = row[2]
                 CRs += locale.atof(row[5])
+
     # print the total number of credit hours for the semester
     CRbox.configure(state='normal')
     CRbox.delete(0,END)
     strval = "{:,.1f}".format(CRs)
     CRbox.insert(0,strval)
     CRbox.configure(state='disabled')
+
+    # calculate the average enrollment
+    if(num_classes > 0):
+        enrollment = enrollment / num_classes
+    
+        # print the average enrollment
+        enroll_box.configure(state='normal')
+        enroll_box.delete(0,END)
+        strval = "{:,.1f}".format(enrollment)
+        enroll_box.insert(0,strval)
+        enroll_box.configure(state='disabled')
+    else:
+        enroll_box.configure(state='normal')
+        enroll_box.delete(0,END)
+        enroll_box.configure(state='disabled')
+
 
 def update_dept(event):
     drop_student.current(0)
@@ -439,6 +464,14 @@ CRbox.config(foreground="black")
 CR_label = Label(root, text="Total CRs")
 CR_label.place(x=RVwidth-250, y=10)
 CRbox.place(x=RVwidth-185, y=10)
+
+# define avg. enrollment box
+enroll_box = ttk.Entry(root, width=10)
+enroll_box.config(foreground="black")
+
+enroll_label = Label(root, text="avg. enrollment")
+enroll_label.place(x=RVwidth-450, y=10)
+enroll_box.place(x=RVwidth-355, y=10)
 
 # define thesis checkbox
 thesis = IntVar()
