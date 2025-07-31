@@ -497,17 +497,38 @@ my_tree.bind('<Double-1>', select)
 
 # selection of rows
 def sum_rows(event):
+    enrollment = 0
+    num_classes = 0
     if(len(my_tree.selection()) > 0):
         CRs = 0
         for item in my_tree.selection():
             record = my_tree.item(item, 'values')
             if(record[5] != ''):
                 CRs += locale.atof(record[5])*locale.atof(record[11])
+            if(record[2] != ''):
+                enrollment += locale.atof(record[11])
+                num_classes += 1
+            
         # print the total number of credit hours for the semester
         CRbox.configure(state='normal')
         CRbox.delete(0,END)
         CRbox.insert(0,str(CRs))
         CRbox.configure(state='disabled')
+
+        # calculate the average enrollment
+        if(num_classes > 0):
+            enrollment = enrollment / num_classes
+        
+            # print the average enrollment
+            enroll_box.configure(state='normal')
+            enroll_box.delete(0,END)
+            strval = "{:,.1f}".format(enrollment)
+            enroll_box.insert(0,strval)
+            enroll_box.configure(state='disabled')
+        else:
+            enroll_box.configure(state='normal')
+            enroll_box.delete(0,END)
+            enroll_box.configure(state='disabled')
 
 my_tree.bind("<<TreeviewSelect>>", sum_rows)
 
