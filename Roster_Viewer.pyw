@@ -19,8 +19,10 @@ from tkinter import filedialog as fd
 root.title('Roster Viewer')
 root.geometry("1570x1000")
 # icon
+base_path = os.path.abspath(".")
+icon_path = os.path.join(base_path, os.path.join("_internal", "Grad.png"))
 try:
-    img = PhotoImage(file='./_internal/Grad.png')
+    img = PhotoImage(file=icon_path)
     root.iconphoto(False, img)
 except:
     print("There is no icon")
@@ -305,8 +307,7 @@ def print_roster(event):
             else:
                 color = 'positive'
 
-            if((thesis.get() and (locale.atof(num[0]) == 595 or
-                                   locale.atof(num[0]) == 596 or
+            if((thesis.get() and (locale.atof(num[0]) == 596 or
                                    locale.atof(num[0]) == 599 or 
                                    locale.atof(num[0]) == 695 or 
                                    locale.atof(num[0]) == 699)) or 
