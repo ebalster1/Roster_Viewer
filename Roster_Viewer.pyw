@@ -15,6 +15,7 @@ root = Tk()
 
 from tkinter import ttk
 from tkinter import filedialog as fd
+import tkinter.font as tkfont
 
 root.title('Roster Viewer')
 root.geometry("1570x1000")
@@ -480,6 +481,29 @@ check = Checkbutton(root, text="Thesis Only",bd=0, variable = thesis, onvalue=1,
                        offvalue=0, command = lambda: print_roster(0))
 check.place(x=RVwidth-115, y=10)
 
+# control text size
+def on_ctrl_mousewheel(event):
+    if event.state & 0x0004:  # Ctrl key pressed
+
+        # get the current font size
+        font_spec = style.lookup("Treeview", "font")
+        font = tkfont.Font(root=root, font=font_spec)
+        size = font.cget("size")
+        # get the row height from the font size
+        row_height = font.metrics("linespace") + 6
+
+        if event.num == 4 or event.delta > 0:
+            if(size > 9):
+                size -= 1
+                row_height -= 1
+        elif event.num == 5 or event.delta < 0:
+            size += 1
+            row_height += 1
+        # set the new font size
+        style.configure("Treeview", font=(font.cget("family"), size), rowheight = row_height)
+
+#bind scrollwheel to treeview
+root.bind("<MouseWheel>", on_ctrl_mousewheel)
 
 # double-click on items to copy them to clipboard
 def select(event):
