@@ -149,17 +149,21 @@ def resizer(event):
         # change the location and size of the scrollbar
         vsb.place(x=RVwidth-20, y=header, height=RVheight-header-10)  
 
-        CR_label.place(x=RVwidth-250, y=10)
-        CRbox.place(x=RVwidth-185, y=10)
-        check.place(x=RVwidth-115, y=10)
+        CR_label.place(x=RVwidth-145, y=10)
+        CRbox.place(x=RVwidth-80, y=10)
+#        CR_label.place(x=RVwidth-250, y=10)
+#        CRbox.place(x=RVwidth-185, y=10)
+#        check.place(x=RVwidth-115, y=10)
 
-        enroll_label.place(x=RVwidth-430, y=10)
-        enroll_box.place(x=RVwidth-335, y=10)
+        enroll_label.place(x=RVwidth-310, y=10)
+        enroll_box.place(x=RVwidth-215, y=10)
+#        enroll_label.place(x=RVwidth-430, y=10)
+#        enroll_box.place(x=RVwidth-335, y=10)
 
         ID_label.place(x=RVwidth-250, y = 43)
         IDbox.place(x=RVwidth-185, width=100, y=43)
         IDbutton.place(x=RVwidth-75, y=38, width=60, height=30)
-
+        
 def print_roster(event):
     k = 0
     child = 0
@@ -311,8 +315,12 @@ def print_roster(event):
             if((thesis.get() and (locale.atof(num[0]) == 596 or
                                    locale.atof(num[0]) == 599 or 
                                    locale.atof(num[0]) == 695 or 
-                                   locale.atof(num[0]) == 699)) or 
-                                   thesis.get() == 0):
+                                   locale.atof(num[0]) == 699))
+                or (nonthesis.get() and (locale.atof(num[0]) != 596 and
+                                         locale.atof(num[0]) != 599 and
+                                         locale.atof(num[0]) != 695 and
+                                         locale.atof(num[0]) != 699))
+                or (thesis.get() == 0 and nonthesis.get() == 0)):
                 # if students are in the same class, dont' change the color
                 if(row[2] == prev_class):
                     even_odd -= 1
@@ -479,7 +487,12 @@ enroll_box.place(x=RVwidth-355, y=10)
 thesis = IntVar()
 check = Checkbutton(root, text="Thesis Only",bd=0, variable = thesis, onvalue=1,
                        offvalue=0, command = lambda: print_roster(0))
-check.place(x=RVwidth-115, y=10)
+nonthesis = IntVar()
+check.place(x=700, y=10)
+check2 = Checkbutton(root, text="Nonthesis Only",bd=0, variable = nonthesis, onvalue=1,
+                       offvalue=0, command = lambda: print_roster(0))
+check2.place(x=700, y=43)
+#check.place(x=RVwidth-115, y=10)
 
 # control text size
 def on_ctrl_mousewheel(event):
@@ -493,12 +506,12 @@ def on_ctrl_mousewheel(event):
         row_height = font.metrics("linespace") + 6
 
         if event.num == 4 or event.delta > 0:
+            size += 1
+            row_height += 1
+        elif event.num == 5 or event.delta < 0:
             if(size > 9):
                 size -= 1
                 row_height -= 1
-        elif event.num == 5 or event.delta < 0:
-            size += 1
-            row_height += 1
         # set the new font size
         style.configure("Treeview", font=(font.cget("family"), size), rowheight = row_height)
 
